@@ -1,29 +1,43 @@
 import migrator
-import json
+import util
 
-short_dict = migrator.generate_prefix_dict()
-print(short_dict)
 
-with open("knjige.txt", "r") as f:
-    for line in f:
-        fields = line.split(chr(30))
-        record = {}
-        for el in fields:
-            tag = el[:3]
-            field_type = set()
-            value = (el[6:]).split(chr(31))
-            polja = migrator.split_field(value)
+def parse_tags():
+    short_dict = util.generate_prefix_dict()
 
-            for k, v in short_dict.items():
-                for t in v:
-                    if tag in t:
-                        field_type.add(k)
+    for k, v in short_dict.items():
+        short_dict[k] = ", ".join(short_dict[k])  # PRETVARAMO VALUES IZ LIST U STR
 
-            if field_type is None:
-                continue
+    new_dict = dict(short_dict)
+    migrator.insert_keys(new_dict)
 
-            if len(polja) > 0:
-                record[tag] = polja
 
-        print(json.dumps(record, ensure_ascii=False))
-        break
+def parse_books():
+    with open("knjige.txt", "r") as f:
+        all_records = list()
+        short_dict = util.generate_prefix_dict()
+
+        for line in f:
+            fields = line.split(chr(30))
+            record = {}
+            for el in fields:
+                tag = el[:3]
+                field_type = set()
+                value = (el[6:]).split(chr(31))
+                polja = util.split_field(value)
+
+                for k, v in short_dict.items():
+                    for t in v:
+                        if tag in t:
+                            field_type.add(k)
+
+                if field_type is None:
+                    continue
+
+                if len(polja) > 0:
+                    record[tag] = polja
+
+            all_records.append(record)
+
+        migrator.insert_books(all_records)
+        # json.dumps(record, ensure_ascii=False))
