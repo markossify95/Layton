@@ -20,6 +20,18 @@ if [[ $file_count -gt 0 ]]; then
     echo "$file_name found!"
     lines=$(wc -l ././../data/$file_name)
     echo "Number of lines: " $lines
+    IFS=$'\n'       # make newlines the only separator
+    set -f          # disable globbing
+    i=0
+    lc=0
+    for line in $(cat ././../data/$file_name); do
+        lc=$[lc+1]
+        if  [[ $line != *$'\x1e\x32\x30\x30'* ]]; then
+            i=$[i+1]
+            echo $lc " . line not ok: " $line
+        fi
+    done
+    echo $i " books are missing title [200]"
 else
     echo "Warning: required $file_name NOT found!"
 fi
