@@ -13,7 +13,7 @@ def parse_tags():
 
 
 def parse_books():
-    with open("knjige.txt", "r") as f:
+    with open("data/knjige.txt", "r") as f:
         all_records = list()
         short_dict = util.generate_prefix_dict()
 

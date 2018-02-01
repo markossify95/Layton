@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 
-def generate_prefix_dict(file="prefiksi.txt"):
+def generate_prefix_dict(file="data/prefiksi.txt"):
     prefiks_dict = defaultdict(list)
     with open(file) as f:
         for l in f:
