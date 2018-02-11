@@ -1,8 +1,10 @@
 #!/bin/bash
 
 DATA_DIR=../data/  # data directory location relative to this script
+RS=$'\x1e'  # record separator
+US=$'\x1f'  # field separator
 
-function check_file()
+function check_file()  # function for checking files
 {
     file_name=$1
     pattern=$2
@@ -15,17 +17,17 @@ function check_file()
         err_lines=0  # count number of lines with incorrect format
         while read LINE; do
             i=$((i+1))
-            if ! [[ ${LINE} =~ ^($pattern)$ ]]; then
+            if ! [[ ${LINE} =~ $pattern ]]; then  # if line doesn't match pattern; then
                 err_lines=$((err_lines+1))
                 echo ${i}". line is in bad format! Content: " ${LINE}
             fi
-        done < ${file_path}
+        done < ${file_path}  # redirect file to loop (read)
         echo "WARNING: $err_lines lines are in incorrect format!"
     else
         echo "WARNING: required $file_name NOT found!"
     fi
 }
 
-check_file "prefiksi.txt" "[A-Z]{2}-[0-9]{3}[a-z]"
-#check_file "knjige.txt" "^(?!(*$'\x1e\x32\x30\x30'*)]" # ne radi
-check_file "PrefixNames_sr.properties" "[A-Z]{2}=(.)+"
+check_file prefiksi.txt "[A-Z]{2}-[0-9]{3}[a-z]"  # checking "prefiksi" file
+check_file PrefixNames_sr.properties "[A-Z]{2}=(.)+"  # checking "PrefixNames_sr" file
+check_file knjige.txt ".*${RS}200..${US}a.*"  # checking "knjige" file
