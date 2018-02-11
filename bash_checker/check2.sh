@@ -6,8 +6,8 @@ US=$'\x1f'  # field separator
 
 function check_file()  # function for checking files
 {
-    file_name=$1
-    pattern=$2
+    file_name=$1  # first function parameter is file name
+    pattern=$2  # second function parameter is regex pattern for file requirement
     file_path="$DATA_DIR$file_name"
     if [ -e ${file_path} ]; then
         line_count=`wc -l ${file_path} | cut -f1 -d' '`  # get total number of lines in a file
