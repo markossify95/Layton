@@ -41,3 +41,15 @@ def parse_books():
 
         migrator.insert_books(all_records)
         # json.dumps(record, ensure_ascii=False))
+
+
+def parse_prefixes():
+    prefixes = {}
+    with open("data/PrefixNames_sr.properties", "rb") as f:
+        for l in f:
+            k_v = l.decode("unicode_escape").split('=')  # kljuc vrednost parovi tipa AU: Autor
+            prefixes[k_v[0]] = k_v[1].rstrip('\n')
+
+    migrator.insert_prefixes(prefixes)
+
+#ove funkcije se pozivaju redom samo prilikom migracije

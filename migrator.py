@@ -17,3 +17,12 @@ def insert_keys(key_list):
         db.create_collection('tags')
 
     db.tags.insert(key_list)
+
+
+def insert_prefixes(prefixes):
+    client = MongoClient()
+    db = client['library']
+    if 'prefixes' not in db.collection_names():
+        db.create_collection('prefixes')
+
+    db.prefixes.insert(prefixes)
