@@ -16,8 +16,11 @@ def parse_books():
     with open("data/knjige.txt", "r") as f:
         all_records = list()
         short_dict = util.generate_prefix_dict()
-
-        for line in f:
+        print("Book parsing started")
+        for i, line in enumerate(f):
+            if not util.check_line(line, ".\x1e200..\x1fa.*"):
+                print("Linija ne valja!", line)
+                continue
             fields = line.split(chr(30))
             record = {}
             for el in fields:
@@ -46,10 +49,19 @@ def parse_books():
 def parse_prefixes():
     prefixes = {}
     with open("data/PrefixNames_sr.properties", "rb") as f:
+        print("Prefix parsing started")
         for l in f:
+            if not util.check_line(l.decode("unicode_escape"), "^[A-Z0-9]{2}=(.)+"):
+                print("Linija ne valja!", l)
+                continue
             k_v = l.decode("unicode_escape").split('=')  # kljuc vrednost parovi tipa AU: Autor
             prefixes[k_v[0]] = k_v[1].rstrip('\n')
 
     migrator.insert_prefixes(prefixes)
 
-#ove funkcije se pozivaju redom samo prilikom migracije
+    # ove funkcije se pozivaju redom samo prilikom migracije
+
+
+# parse_tags()
+# parse_books()
+# parse_prefixes()

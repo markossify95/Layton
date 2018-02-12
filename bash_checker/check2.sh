@@ -28,6 +28,6 @@ function check_file()  # function for checking files
     fi
 }
 
-check_file prefiksi.txt "[A-Z]{2}-[0-9]{3}[a-z]"
+check_file prefiksi.txt "[A-Z0-9]{2}-[0-9]{3}[a-z]$"
 check_file PrefixNames_sr.properties "[A-Z0-9]{2}=(.)+"
 check_file knjige.txt ".*${RS}200..${US}a.*"
