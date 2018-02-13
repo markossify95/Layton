@@ -39,22 +39,21 @@ def filter_books():
             for k, v in filter_dict.items():
 
                 search_value = get_value_by_key_in_list(req_list, k)
-                # print("Nasao: " + search_value[k] + " logic: " + search_value['logic'])
+                print("Nasao: " + search_value[k] + " logic: " + search_value['logic'])
                 if search_value is not None:
-                    if search_value['logic'] == 'OR':
-                        partial_dict = generate_simple_query_dict(v, search_value[k])
-                        and_dict['$or'].append(partial_dict)
-                        # print("Za " + search_value[k])
-                        # print(and_dict)
+                    if search_value['logic'] == 'AND':
+                        partial_dict = generate_or_query_dict(v, search_value[k]) #OVAJ IZMENJEN
+                        and_dict['$and'].append(partial_dict)
                     else:
                         partial_dict = generate_or_query_dict(v, search_value[k])
-                        final_dict['$and'].append(partial_dict)
+                        if not partial_dict:
+                            print("OVDE SAM PUKO")
+                        final_dict['$or'].append(partial_dict)
 
-            final_dict['$and'].append(dict(and_dict))
-        # print("Query: ")
+            if and_dict:
+                final_dict['$or'].append(dict(and_dict))
         pprint(dict(final_dict))
         rs = books.find(final_dict)
-        # pprint(dumps(rs))
     return dumps(rs)
 
 
@@ -91,11 +90,6 @@ def modifikuj_kriterijume(query):
 
 
 def parse_list(lista):
-    # dicter = defaultdict(list)
-    # for el in lista:
-    #     num = el[:3]
-    #     char = el[3]
-    #     dicter[num].append(char)
     final_set = set()
     for el in lista:
         final_set.add(el[:3])
@@ -110,17 +104,6 @@ def get_value_by_key_in_list(dict_list, key):
     return None
 
 
-# books.find($'$or':[{'965':'Beban'}, {'605':'Beban'}
-#
-#
-# def generisi_query_dict(req_list, filter_dict):
-#     final_dict = defaultdict(list)
-#     for k, v in filter_dict:
-#         for item in req_list:
-#             if item.get(k) is not None:
-#
-#                 final_dict['$or'].append()
-
 def generate_simple_query_dict(field_list, value):
     or_dict = {}
     # final_dict = defaultdict(list)
@@ -128,7 +111,7 @@ def generate_simple_query_dict(field_list, value):
         or_dict[item] = {"$regex": u"" + value}
         # final_dict['$or'].append(or_dict)
         # or_dict = {}
-    # print(final_dict)
+    print(or_dict)
     return or_dict
 
 
@@ -139,6 +122,7 @@ def generate_or_query_dict(field_list, value):
         or_dict[item] = {"$regex": u"" + value}
         final_dict['$or'].append(or_dict)
         or_dict = {}
+    print(final_dict)
     return dict(final_dict)
 
 
