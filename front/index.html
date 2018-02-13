@@ -22,20 +22,20 @@
             attention to featured content or information.</p>
     </div>
     <form method="GET">
-        <div style="display: none" data-type="template">
-            <div class="input-group mb-3 row">
+        <div class="query-container" style="display: none" data-type="template">
+            <div class="input-group mb-3 row mx-auto">
                 <div class="input-group-prepend">
                     <button class="btn btn-secondary dropdown-toggle criteria" id="dd1" type="button"
                             data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">Choose criteria
                     </button>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Kriterijum 1</a>
-                        <a class="dropdown-item" href="#">Kriterijum 2</a>
-                        <a class="dropdown-item" href="#">Kriterijum 3</a>
+                        <!--<a class="dropdown-item" href="#">Kriterijum 1</a>-->
+                        <!--<a class="dropdown-item" href="#">Kriterijum 2</a>-->
+                        <!--<a class="dropdown-item" href="#">Kriterijum 3</a>-->
                     </div>
                 </div>
-                <input type="text" class="form-control" aria-label="Text input with dropdown button">
+                <input type="text" class="form-control query-text" aria-label="Text input with dropdown button">
                 <div class="input-group-append">
                     <input type="button" class="btn btn-secondary logical" id="l1" value="AND">
                     </button>
@@ -49,7 +49,7 @@
         </div>
     </form>
     <button type="button" class="btn btn-primary btn-lg btn-block" name="adder">Add new query</button>
-    <button type="button" class="btn btn-secondary btn-lg btn-block">Search</button>
+    <button type="button" class="btn btn-secondary btn-lg btn-block" name="searcher">Search</button>
 
 </div>
 </body>
