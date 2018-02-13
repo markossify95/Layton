@@ -17,12 +17,19 @@ def generate_prefix_dict(file="data/prefiksi.txt"):
 
 
 def split_field(value):
-    field_dict = {}
+    # field_dict = {}
+    # for item in value:
+    #     if len(item.strip('\n')) > 1:
+    #         field_dict[item[:1]] = item[1:].strip('\n')
+    # print("Value: " + str(value) + "\nDict: " + str(field_dict) + "\n\n")
+    # return field_dict
+    final_str = ""
     for item in value:
         if len(item.strip('\n')) > 1:
-            field_dict[item[:1]] = item[1:].strip('\n')
+            final_str += item[1:].strip('\n').lower() + ";"
 
-    return field_dict
+    # print("Lista: " + str(value) + "\nString: " + final_str + "\n\n")
+    return final_str
 
 
 def check_line(line, pattern):

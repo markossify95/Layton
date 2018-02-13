@@ -82,12 +82,22 @@ $(document).ready(function () {
                     return false;
                 }
             });
-            item [key] = txt.val();
+            item [key] = txt.val().toLowerCase();
             item ["logic"] = logic.val();
 
             jsonObj.push(item);
         }
-        console.log(jsonObj);
+        $.ajax({
+            url: "http://127.0.0.1:8080/books",
+            dataType: 'json',
+            type: 'post',
+            data: JSON.stringify(jsonObj),
+            crossDomain: true,
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                console.log(data);
+            }
+        });
     });
 });
 

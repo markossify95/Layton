@@ -29,13 +29,13 @@ def parse_books():
                 value = (el[6:]).split(chr(31))
                 polja = util.split_field(value)
 
-                for k, v in short_dict.items():
-                    for t in v:
-                        if tag in t:
-                            field_type.add(k)
-
-                if field_type is None:
-                    continue
+                # for k, v in short_dict.items():
+                #     for t in v:
+                #         if tag in t:
+                #             field_type.add(k)
+                #
+                # if field_type is None:
+                #     continue
 
                 if len(polja) > 0:
                     record[tag] = polja
@@ -63,5 +63,5 @@ def parse_prefixes():
 
 
 # parse_tags()
-# parse_books()
+parse_books()
 # parse_prefixes()
