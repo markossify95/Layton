@@ -66,7 +66,7 @@ $(document).ready(function () {
 
     //ajax function OVA TRAZI IZMENU I PRAVILNO PAKOVANJE U JSON
     $("button[name='searcher']").click(function () {
-        var query = "";
+        var jsonObj = [];
         var all_divs = document.getElementsByClassName("query-container");
         // console.log(all_divs);
         for (i = 1; i < all_divs.length; i++) {
@@ -74,9 +74,20 @@ $(document).ready(function () {
             var btn = $(d.find('.criteria')[0]);
             var txt = $(d.find('.query-text')[0]);
             var logic = $(d.find('.logical')[0]);
-            query += " " + btn.val() + " " + txt.val() + " " + logic.val();
+            item = {};
+            var key = "";
+            $.each(prefixes['0'], function (k, v) {
+                if (btn.val() === v) {
+                    key = k;
+                    return false;
+                }
+            });
+            item [key] = txt.val();
+            item ["logic"] = logic.val();
+
+            jsonObj.push(item);
         }
-        console.log(query);
+        console.log(jsonObj);
     });
 });
 
