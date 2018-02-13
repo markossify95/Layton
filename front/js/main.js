@@ -22,6 +22,12 @@ $(function () {
     });
 });
 
+$(function () {
+    $('.container').on('click', '.close', function () {
+        $(this).closest('div[data-type="template"]').remove();
+    });
+});
+
 var button_id = 2;
 var dropdown_id = 2;
 
@@ -35,6 +41,7 @@ $(document).ready(function () {
         $(tempNode).find('.criteria').attr('id', 'dd' + dropdown_id++);
         $(tempNode).find('.criteria').text('Choose criteria');
         $(tempNode).find('.criteria').val('Choose criteria');
+        tempNode.style.display = "block";
         document.querySelector("div[data-type='template']").parentNode.appendChild(tempNode);
         $("html, body").animate({scrollTop: $(document).height()}, 500);
     });

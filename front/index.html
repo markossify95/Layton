@@ -22,13 +22,14 @@
             attention to featured content or information.</p>
     </div>
     <form method="GET">
-        <div data-type="template">
+        <div style="display: none" data-type="template">
             <div class="input-group mb-3 row">
                 <div class="input-group-prepend">
-                    <button class="btn btn-secondary dropdown-toggle criteria" id="dd1" type="button" data-toggle="dropdown"
+                    <button class="btn btn-secondary dropdown-toggle criteria" id="dd1" type="button"
+                            data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">Choose criteria
                     </button>
-                    <div class="dropdown-menu" >
+                    <div class="dropdown-menu">
                         <a class="dropdown-item" href="#">Kriterijum 1</a>
                         <a class="dropdown-item" href="#">Kriterijum 2</a>
                         <a class="dropdown-item" href="#">Kriterijum 3</a>
@@ -37,6 +38,11 @@
                 <input type="text" class="form-control" aria-label="Text input with dropdown button">
                 <div class="input-group-append">
                     <input type="button" class="btn btn-secondary logical" id="l1" value="AND">
+                    </button>
+                </div>
+                <div class="input-group-append">
+                    <button type="button" class="close" aria-label="Close" style="margin-left: 10px; margin-top: 5px">
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
             </div>
