@@ -161,8 +161,6 @@ def prepare_dict(final_dict):
 
     return prepared_dict
 
-if __name__ == '__main__':
-    # app.run(port=8080)
-    d = {100: "d;2006;scr;", 101: "scr;", 102: "scg;", 200: "na drini ćuprija;ivo andrić;", 210: "zrenjanin;sezam book;2006;", 215: "394 str.;21 cm;", 225: "biseri našeg nobelovca;sezam book, zrenjanin;", 300: "rečnik turcizama, provincijalizama i nekih manje poznatih izraza: str. 389-394;", 675: "821.163.41-31;821.163.41-31;", 700: "070;andrić;ivo;"}
-    print(prepare_dict(d))
 
+if __name__ == '__main__':
+    app.run(port=8080)

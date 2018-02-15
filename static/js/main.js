@@ -37,6 +37,7 @@ function populate_grid(resultObj) {
     // $("#book_table").trigger('reloadGrid');
 }
 
+
 $(document).ready(function () {
     var prefixes = [];
     $.ajax({
@@ -54,15 +55,23 @@ $(document).ready(function () {
         colModel: [
             {
                 label: 'Title',
-                name: '200'
+                name: 'title'
             },
             {
-                label: 'ISBN',
-                name: '010'
+                label: 'Author',
+                name: 'author'
             },
             {
-                label: 'Neki kurac',
-                name: '210'
+                label: 'Place',
+                name: 'place'
+            },
+            {
+                label: 'Publisher',
+                name: 'publisher'
+            },
+            {
+                label: 'Year',
+                name: 'year'
             }
         ],
 
@@ -125,7 +134,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: "http://127.0.0.1:8080/books",
+            url: "http://127.0.0.1:8080/books_simple",
             dataType: 'json',
             type: 'post',
             data: JSON.stringify(jsonObj),
