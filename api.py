@@ -26,7 +26,8 @@ def get_tags():
 # @cross_origin(supports_credentials=True)
 def filter_books():
     rs = None
-    if request.method == "POST":
+    if request.method == "POST" and request.data is not None:
+        print(request.data)
         req_list = loads(request.data.decode('unicode_escape'))
         and_dict = defaultdict(list)
         final_dict = defaultdict(list)
@@ -42,7 +43,7 @@ def filter_books():
                 print("Nasao: " + search_value[k] + " logic: " + search_value['logic'])
                 if search_value is not None:
                     if search_value['logic'] == 'AND':
-                        partial_dict = generate_or_query_dict(v, search_value[k]) #OVAJ IZMENJEN
+                        partial_dict = generate_or_query_dict(v, search_value[k])  # OVAJ IZMENJEN
                         and_dict['$and'].append(partial_dict)
                     else:
                         partial_dict = generate_or_query_dict(v, search_value[k])
@@ -57,7 +58,7 @@ def filter_books():
     return dumps(rs)
 
 
-@app.route('/prefixes', methods=['GET'])
+@app.route('/prefixes', methods=['GET', 'OPTIONS'])
 # @cross_origin(supports_credentials=True)
 def get_prefixes():
     prefix_list = prefixes.find()

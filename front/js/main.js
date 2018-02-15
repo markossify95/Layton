@@ -31,6 +31,12 @@ $(function () {
 var button_id = 2;
 var dropdown_id = 2;
 
+function populate_grid(resultObj) {
+    $("#book_table").jqGrid('setGridParam', {data: resultObj});
+    $("#book_table")[0].grid.endReq();
+    $("#book_table").trigger('reloadGrid');
+}
+
 $(document).ready(function () {
     var prefixes = [];
     $.ajax({
@@ -42,6 +48,30 @@ $(document).ready(function () {
         success: function (data) {
             prefixes = data;
         }
+    });
+
+    $("#book_table").jqGrid({
+        colModel: [
+            {
+                label: 'Title',
+                name: '200'
+            },
+            {
+                label: 'ISBN',
+                name: '010'
+            },
+            {
+                label: 'Neki kurac',
+                name: '210'
+            }
+        ],
+
+        viewrecords: true, // show the current page, data rang and total records on the toolbar
+        autowidth: true,
+        rowNum: [5, 10, 20],
+        datatype: 'local',
+        pager: "#perpage",
+        caption: "Rezultati pretrage"
     });
 
 
@@ -87,6 +117,7 @@ $(document).ready(function () {
 
             jsonObj.push(item);
         }
+
         $.ajax({
             url: "http://127.0.0.1:8080/books",
             dataType: 'json',
@@ -95,9 +126,14 @@ $(document).ready(function () {
             crossDomain: true,
             contentType: 'application/json; charset=utf-8',
             success: function (data) {
-                console.log(data);
+                resultObj = data;
+                console.log(resultObj);
+                populate_grid(resultObj);
             }
         });
+
     });
+
+
 });
 
