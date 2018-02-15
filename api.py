@@ -2,7 +2,7 @@ from collections import defaultdict
 from pprint import pprint
 
 from bson.json_util import (dumps, loads)
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_cors import CORS
 from pymongo import MongoClient
 
@@ -12,8 +12,13 @@ books = db.books
 tags = db.tags
 prefixes = db.prefixes
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 CORS(app, support_credentials=True)
+
+
+@app.route('/', methods=['GET'])
+def get_template():
+    return render_template('index.html')
 
 
 @app.route('/tags', methods=['GET'])

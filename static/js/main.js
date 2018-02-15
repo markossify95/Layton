@@ -32,9 +32,9 @@ var button_id = 2;
 var dropdown_id = 2;
 
 function populate_grid(resultObj) {
-    $("#book_table").jqGrid('setGridParam', {data: resultObj});
-    $("#book_table")[0].grid.endReq();
-    $("#book_table").trigger('reloadGrid');
+    $("#book_table").jqGrid('setGridParam', {data: resultObj}).trigger('reloadGrid');
+    // $("#book_table")[0].grid.endReq();
+    // $("#book_table").trigger('reloadGrid');
 }
 
 $(document).ready(function () {
@@ -79,6 +79,7 @@ $(document).ready(function () {
 
 
     $("button[name='adder']").click(function () {
+
         console.log(prefixes['0']);
         var tempNode = document.querySelector("div[data-type='template']").cloneNode(true); //true for deep clone
         // console.log(tempNode.find('.logical'));
@@ -93,6 +94,8 @@ $(document).ready(function () {
             $(dropdown).append("<a class='dropdown-item' href='#'>" + v + "</a>");
         });
         tempNode.style.display = "block";
+        while (prefixes.length < 1) {
+        }
         document.querySelector("div[data-type='template']").parentNode.appendChild(tempNode);
         $("html, body").animate({scrollTop: $(document).height()}, 500);
     });
