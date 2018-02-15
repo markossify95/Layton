@@ -90,7 +90,7 @@ def filter_books(req_list, simple=True):
             final_dict['$or'].append(dict(and_dict))
     pprint(dict(final_dict))
     resp = books.find(final_dict)
-    if simple:
+    if simple:  # ako je simple response vraca odgovarajuca polja
         resp = prepare_response(resp)
     return resp
 
