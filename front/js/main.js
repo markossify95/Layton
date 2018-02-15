@@ -73,7 +73,6 @@ $(document).ready(function () {
         datatype: 'local',
         pager: "#perpage",
         caption: "Search results",
-        viewrecords: true,
         gridview: true,
         height: "auto"
     });
