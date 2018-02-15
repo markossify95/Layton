@@ -3,6 +3,10 @@ import util
 
 
 def parse_tags():
+    """
+    Metoda za parsiranje tagova iz fajla i migracija u bazu
+    :return: 
+    """
     short_dict = util.generate_prefix_dict()
 
     for k, v in short_dict.items():
@@ -13,6 +17,10 @@ def parse_tags():
 
 
 def parse_books():
+    """
+    Metoda za parsiranje knjiga u bazu iz fajla
+    :return: 
+    """
     with open("data/knjige.txt", "r") as f:
         all_records = list()
         short_dict = util.generate_prefix_dict()
@@ -47,6 +55,10 @@ def parse_books():
 
 
 def parse_prefixes():
+    """
+    Metoda za parsiranje prefiksa iz fajla
+    :return: 
+    """
     prefixes = {}
     with open("data/PrefixNames_sr.properties", "rb") as f:
         print("Prefix parsing started")
@@ -62,6 +74,7 @@ def parse_prefixes():
     # ove funkcije se pozivaju redom samo prilikom migracije
 
 
+# pokrenuti samo prvi put pri inicijalizaciji baze
 # parse_tags()
-parse_books()
+# parse_books()
 # parse_prefixes()

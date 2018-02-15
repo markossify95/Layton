@@ -1,3 +1,6 @@
+"""
+migrator.py - metode za upis podataka u bazu pri parsiranju
+"""
 from pymongo import MongoClient
 
 

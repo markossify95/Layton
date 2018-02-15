@@ -34,7 +34,8 @@ def get_books_by_query_simple():
     resp = []
     if request.method == "POST" and request.data is not None:
         print(request.data)
-        req_list = loads(request.data.decode('unicode_escape'))
+        req_list = loads(request.data.decode('utf-8'))
+
         resp = filter_books(req_list)
     return json.dumps(resp)
 
@@ -42,15 +43,26 @@ def get_books_by_query_simple():
 @app.route('/books_complex', methods=['POST'])
 # @cross_origin(supports_credentials=True)
 def get_books_by_query_complex():
+    """
+    Metoda za slanje svih podataka za knjige
+    :return: 
+    """
     resp = []
     if request.method == "POST" and request.data is not None:
+
+        req_list = loads(request.data.decode('utf-8'))
         print(request.data)
-        req_list = loads(request.data.decode('unicode_escape'))
         resp = filter_books(req_list, simple=False)
     return json.dumps(resp)
 
 
 def filter_books(req_list, simple=True):
+    """
+    metoda za filtriranje knjiga prema upitu, koriste je get_books_by_query_ simple|complex
+    :param req_list: upit sa frontenda
+    :param simple: false = complex
+    :return: 
+    """
     resp = []
     and_dict = defaultdict(list)
     final_dict = defaultdict(list)
@@ -86,12 +98,20 @@ def filter_books(req_list, simple=True):
 @app.route('/prefixes', methods=['GET', 'OPTIONS'])
 # @cross_origin(supports_credentials=True)
 def get_prefixes():
+    """
+    Metoda za slanje human readable prefiksa na frontend
+    :return: 
+    """
     prefix_list = prefixes.find()
     return dumps(prefix_list, ensure_ascii=False)  # , JSONOptions(json_mode=JSONMode.RELAXED)
 
 
 def modifikuj_kriterijume(query):
-    # query = [{"KW": "Haos", "logic": "AND"}, {"AU": "NEDELJKOVIĆ", "logic": "OR"}]
+    """
+    Parsiranje parametara na podpolja
+    :param query: [{"KW": "Haos", "logic": "AND"}, {"AU": "NEDELJKOVIĆ", "logic": "OR"}]
+    :return: 
+    """
     tag_values = tags.find_one()
     dict_sq = {}
     for q in query:
@@ -142,17 +162,42 @@ def generate_simple_query_dict(field_list, value):
 
 
 def generate_or_query_dict(field_list, value):
+    """
+    Generisanje or upita
+    :param field_list: 
+    :param value: 
+    :return: 
+    """
     or_dict = {}
     final_dict = defaultdict(list)
     for item in field_list:
-        or_dict[item] = {"$regex": u"" + value}
-        final_dict['$or'].append(or_dict)
+        # or_dict[item] = parse_single_query(item, value)
+        final_dict['$or'].append(parse_single_query(item, value))
         or_dict = {}
     print(final_dict)
     return dict(final_dict)
 
 
+def parse_single_query(item, values):
+    """
+    Metoda za obradu upira u slucaju vise reci // Ivo Andric, Mesa Selimovic
+    :param item: broj polja
+    :param values: reci u upiru
+    :return: 
+    """
+    and_dict = defaultdict(list)
+    value_list = values.split(' ')
+    for val in value_list:
+        and_dict['$and'].append({item: {"$regex": u"" + val}})
+    return dict(and_dict)
+
+
 def prepare_dict(final_dict):
+    """
+    Priprema jednog record-a za simple response, za naslovom, autorom i ostalim zahtevanim poljima
+    :param final_dict: 
+    :return: 
+    """
     prepared_dict = {}
     try:
         title_author = final_dict.get('200').split(';')
@@ -187,9 +232,14 @@ def prepare_dict(final_dict):
 
 
 def prepare_response(rs):
+    """
+    Priprema liste dict-ova za krajnji response za simple response
+    :param rs: 
+    :return: 
+    """
     response = []
     for element in rs:
-        print(element)
+        # print(element)
         prepared = prepare_dict(element)
         response.append(prepared)
     return response
