@@ -55,6 +55,7 @@ def filter_books():
                 final_dict['$or'].append(dict(and_dict))
         pprint(dict(final_dict))
         rs = books.find(final_dict)
+        print(rs)
     return dumps(rs)
 
 
@@ -127,5 +128,36 @@ def generate_or_query_dict(field_list, value):
     return dict(final_dict)
 
 
+def prepare_dict(final_dict):
+    prepared_dict = {}
+    try:
+        title_author = final_dict.get(200).split(';')
+        title = title_author[0]
+        author = title_author[1]
+        prepared_dict["title"] = title.title()
+        prepared_dict["author"] = author.title()
+    except:
+        prepared_dict["title"] = ""
+        prepared_dict["author"] = ""
+    try:
+        pub_year = final_dict.get(210).split(';')
+        publisher = pub_year[1]
+        year = pub_year[2]
+        prepared_dict["publisher"] = publisher.title()
+        prepared_dict["year"] = year
+    except:
+        prepared_dict["publisher"] = ""
+        prepared_dict["year"] = ""
+    try:
+        place_str = final_dict[102].split(';')[0]
+        prepared_dict["place"] = place_str
+    except:
+        prepared_dict["place"] = ""
+
+    return prepared_dict
+
 if __name__ == '__main__':
-    app.run(port=8080)
+    # app.run(port=8080)
+    d = {100: "d;2006;scr;", 101: "scr;", 102: "scg;", 200: "na drini ćuprija;ivo andrić;", 210: "zrenjanin;sezam book;2006;", 215: "394 str.;21 cm;", 225: "biseri našeg nobelovca;sezam book, zrenjanin;", 300: "rečnik turcizama, provincijalizama i nekih manje poznatih izraza: str. 389-394;", 675: "821.163.41-31;821.163.41-31;", 700: "070;andrić;ivo;"}
+    print(prepare_dict(d))
+
