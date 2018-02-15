@@ -68,10 +68,14 @@ $(document).ready(function () {
 
         viewrecords: true, // show the current page, data rang and total records on the toolbar
         autowidth: true,
-        rowNum: [5, 10, 20],
+        rowList: [10, 20, 30],
+        rowNum: 20,
         datatype: 'local',
         pager: "#perpage",
-        caption: "Rezultati pretrage"
+        caption: "Search results",
+        viewrecords: true,
+        gridview: true,
+        height: "auto"
     });
 
 
