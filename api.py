@@ -49,7 +49,6 @@ def get_books_by_query_complex():
     """
     resp = []
     if request.method == "POST" and request.data is not None:
-
         req_list = loads(request.data.decode('utf-8'))
         print(request.data)
         resp = filter_books(req_list, simple=False)
@@ -245,5 +244,33 @@ def prepare_response(rs):
     return response
 
 
+def stringify_dict(resp_dict):
+    """
+    prebacivanje jednog record-a u string za complex response
+    :param resp_dict: 
+    :return: 
+    """
+    lst = []
+    for k, v in resp_dict.items():
+        field = k + '  ' + v
+        lst.append(field)
+    return ' '.join(lst)
+
+
+def stringify_response(resp):
+    """
+    za complex response priprema stringova
+    :param resp: 
+    :return: 
+    """
+    lst = []
+    for r in resp:
+        lst.append(stringify_dict(r))
+    return lst
+
+
+
+
 if __name__ == '__main__':
-    app.run(port=8080)
+    # app.run(port=8080)
+    print(stringify_response([{"100": "lalalalal", "101": "jajajajaja", "150": "kirac"}, {"999": "sisa", "434": "aaa"}]))
