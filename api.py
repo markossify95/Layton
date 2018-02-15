@@ -1,3 +1,4 @@
+import json
 from collections import defaultdict
 from pprint import pprint
 
@@ -27,41 +28,59 @@ def get_tags():
     return dumps(all_t)
 
 
-@app.route('/books', methods=['POST'])
+@app.route('/books_simple', methods=['POST'])
 # @cross_origin(supports_credentials=True)
-def filter_books():
-    rs = None
+def get_books_by_query_simple():
+    resp = []
     if request.method == "POST" and request.data is not None:
         print(request.data)
         req_list = loads(request.data.decode('unicode_escape'))
-        and_dict = defaultdict(list)
-        final_dict = defaultdict(list)
-        if len(req_list) > 0:
-            print(req_list)
-            filter_dict = modifikuj_kriterijume(req_list)
-            print(filter_dict)
-            if not filter_dict:
-                return dumps({})
-            for k, v in filter_dict.items():
+        resp = filter_books(req_list)
+    return json.dumps(resp)
 
-                search_value = get_value_by_key_in_list(req_list, k)
-                print("Nasao: " + search_value[k] + " logic: " + search_value['logic'])
-                if search_value is not None:
-                    if search_value['logic'] == 'AND':
-                        partial_dict = generate_or_query_dict(v, search_value[k])  # OVAJ IZMENJEN
-                        and_dict['$and'].append(partial_dict)
-                    else:
-                        partial_dict = generate_or_query_dict(v, search_value[k])
-                        if not partial_dict:
-                            print("OVDE SAM PUKO")
-                        final_dict['$or'].append(partial_dict)
 
-            if and_dict:
-                final_dict['$or'].append(dict(and_dict))
-        pprint(dict(final_dict))
-        rs = books.find(final_dict)
-        print(rs)
-    return dumps(rs)
+@app.route('/books_complex', methods=['POST'])
+# @cross_origin(supports_credentials=True)
+def get_books_by_query_complex():
+    resp = []
+    if request.method == "POST" and request.data is not None:
+        print(request.data)
+        req_list = loads(request.data.decode('unicode_escape'))
+        resp = filter_books(req_list, simple=False)
+    return json.dumps(resp)
+
+
+def filter_books(req_list, simple=True):
+    resp = []
+    and_dict = defaultdict(list)
+    final_dict = defaultdict(list)
+    if len(req_list) > 0:
+        print(req_list)
+        filter_dict = modifikuj_kriterijume(req_list)
+        print(filter_dict)
+        if not filter_dict:
+            return dumps({})
+        for k, v in filter_dict.items():
+
+            search_value = get_value_by_key_in_list(req_list, k)
+            print("Nasao: " + search_value[k] + " logic: " + search_value['logic'])
+            if search_value is not None:
+                if search_value['logic'] == 'AND':
+                    partial_dict = generate_or_query_dict(v, search_value[k])  # OVAJ IZMENJEN
+                    and_dict['$and'].append(partial_dict)
+                else:
+                    partial_dict = generate_or_query_dict(v, search_value[k])
+                    if not partial_dict:
+                        print("OVDE SAM PUKO")
+                    final_dict['$or'].append(partial_dict)
+
+        if and_dict:
+            final_dict['$or'].append(dict(and_dict))
+    pprint(dict(final_dict))
+    resp = books.find(final_dict)
+    if simple:
+        resp = prepare_response(resp)
+    return resp
 
 
 @app.route('/prefixes', methods=['GET', 'OPTIONS'])
@@ -136,16 +155,21 @@ def generate_or_query_dict(field_list, value):
 def prepare_dict(final_dict):
     prepared_dict = {}
     try:
-        title_author = final_dict.get(200).split(';')
+        title_author = final_dict.get('200').split(';')
         title = title_author[0]
-        author = title_author[1]
         prepared_dict["title"] = title.title()
-        prepared_dict["author"] = author.title()
+
     except:
         prepared_dict["title"] = ""
+    try:
+        full_author = final_dict.get('700').split(';')
+        author = full_author[1] + " " + full_author[2]
+
+        prepared_dict["author"] = author.title()
+    except:
         prepared_dict["author"] = ""
     try:
-        pub_year = final_dict.get(210).split(';')
+        pub_year = final_dict.get('210').split(';')
         publisher = pub_year[1]
         year = pub_year[2]
         prepared_dict["publisher"] = publisher.title()
@@ -154,12 +178,21 @@ def prepare_dict(final_dict):
         prepared_dict["publisher"] = ""
         prepared_dict["year"] = ""
     try:
-        place_str = final_dict[102].split(';')[0]
+        place_str = final_dict['102'].split(';')[0]
         prepared_dict["place"] = place_str
     except:
         prepared_dict["place"] = ""
 
     return prepared_dict
+
+
+def prepare_response(rs):
+    response = []
+    for element in rs:
+        print(element)
+        prepared = prepare_dict(element)
+        response.append(prepared)
+    return response
 
 
 if __name__ == '__main__':

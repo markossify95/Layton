@@ -32,6 +32,7 @@ var button_id = 2;
 var dropdown_id = 2;
 
 function populate_grid(resultObj) {
+    $("#book_table").jqGrid("clearGridData");
     $("#book_table").jqGrid('setGridParam', {data: resultObj}).trigger('reloadGrid');
     // $("#book_table")[0].grid.endReq();
     // $("#book_table").trigger('reloadGrid');
