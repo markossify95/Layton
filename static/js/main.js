@@ -40,9 +40,29 @@ function populate_grid(resultObj) {
 
 
 $(document).ready(function () {
+    if (!localStorage.getItem('token') || localStorage.getItem('expires') < Date.now()) {
+        $.ajax({
+            url: "http://127.0.0.1:5000/get_access_token",
+            dataType: 'json',
+            type: 'get',
+            crossDomain: true,
+            contentType: 'application/json; charset=utf-8',
+            async: false,
+            success: function (data) {
+                token = data['id'];
+                exp = data['expires'];
+                console.log("STIGO TOKISHA HEHEHE");
+                console.log(data);
+                localStorage.setItem('token', token);
+                localStorage.setItem('expires', exp);
+            }
+        });
+    }
+
     var prefixes = [];
+    // while (localStorage.getItem('token') === null){
     $.ajax({
-        url: "http://127.0.0.1:8080/prefixes",
+        url: "http://127.0.0.1:5000/prefixes",
         dataType: 'json',
         type: 'get',
         crossDomain: true,
@@ -51,6 +71,7 @@ $(document).ready(function () {
             prefixes = data;
         }
     });
+    // }
 
     $("#book_table").jqGrid({
         colModel: [
@@ -140,16 +161,24 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: "http://127.0.0.1:8080/books_simple",
+            url: "http://127.0.0.1:5000/books_simple",
             dataType: 'json',
             type: 'post',
             data: JSON.stringify(jsonObj),
+            headers: {
+                "Authorization": localStorage.getItem('token')
+            },
             crossDomain: true,
             contentType: 'application/json; charset=utf-8',
             success: function (data) {
                 resultObj = data;
-                console.log(resultObj);
-                populate_grid(resultObj);
+                if (resultObj['Authorized']) {
+                    alert("Session expired. Reloading...");
+                    location.reload().delay(2000);
+                } else {
+                    console.log(resultObj);
+                    populate_grid(resultObj);
+                }
             }
         });
 

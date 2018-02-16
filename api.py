@@ -1,10 +1,12 @@
 import json
 from collections import defaultdict
+from datetime import datetime, timedelta
 from pprint import pprint
+from uuid import uuid4
 
 from bson.json_util import (dumps, loads)
 from flask import Flask, request, render_template
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from pymongo import MongoClient
 
 client = MongoClient('localhost', 27017)
@@ -14,6 +16,11 @@ tags = db.tags
 prefixes = db.prefixes
 
 app = Flask(__name__, static_url_path='')
+# app.permanent_session_lifetime = 24000
+# app.config['SESSION_COOKIE_DOMAIN'] = 'dev.localhost'
+# app.session_interface = MongoSessionInterface()
+
+
 CORS(app, support_credentials=True)
 
 
@@ -29,15 +36,58 @@ def get_tags():
 
 
 @app.route('/books_simple', methods=['POST'])
-# @cross_origin(supports_credentials=True)
-def get_books_by_query_simple():
-    resp = []
+@cross_origin(supports_credentials=True)
+def get_books():
+    resp = None
     if request.method == "POST" and request.data is not None:
         print(request.data)
         req_list = loads(request.data.decode('utf-8'))
+        t = request.headers.get('Authorization')
+        if not find_and_update(t, req_list):
+            resp = json.dumps({'Authorized': False})
+        else:
+            # resp = json.dumps(req_list)
+            resp = json.dumps(filter_books(req_list))
+    return resp
 
-        resp = filter_books(req_list)
-    return json.dumps(resp)
+
+@app.route('/get_access_token', methods=['GET'])
+@cross_origin(supports_credentials=True)
+def get_token():
+    t = str(uuid4())
+    exp = datetime.utcnow() + timedelta(hours=10)
+    db.custom_auth.update({'id': t}, {'id': t, 'expires': exp, 'data': []}, upsert=True)
+    return json.dumps({'id': t, 'expires': str(exp)})
+
+
+def find_and_update(token, req_list):
+    # token = r.headers.get('Authorization')
+    if not token:
+        return False
+
+    token = db.custom_auth.find_one({'id': token})
+    if token and token['expires'] > datetime.utcnow():
+        token['data'] += req_list
+        # exp = datetime.utcnow() + timedelta(hours=10)
+        db.custom_auth.update({'id': token['id']},
+                              {"$set": {'id': token['id'],
+                                        'expires': token['expires'],
+                                        'data': token['data']}}, True)
+        return True
+    else:
+        return False
+
+
+@app.route('/get_session_history', methods=['GET'])
+@cross_origin(supports_credentials=True)
+def get_session_history(token):
+    if not token:
+        return False
+
+    token = db.custom_auth.find_one({'id': token})
+    if token and token['expires'] > datetime.utcnow():
+        return json.dumps({'searches': token['data']})
+    return json.dumps({})
 
 
 # @app.route('/books_complex', methods=['POST'])
@@ -267,6 +317,7 @@ def recover_string(raw_data):
         result += str(chr(97 + i)) + element.strip() + " "
     return result
 
+
 # def stringify_response(resp):
 #     """
 #     za complex response priprema stringova
@@ -280,9 +331,5 @@ def recover_string(raw_data):
 #     return lst
 
 
-
-
 if __name__ == '__main__':
-    app.run(port=8080)
-    # print(stringify_response([{"100": "lalalalal", "101": "jajajajaja", "150": "kirac"}, {"999": "sisa", "434": "aaa"}]))
-    # print(chr(65))
+    app.run('dev.localhost')
