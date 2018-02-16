@@ -73,6 +73,11 @@ $(document).ready(function () {
             {
                 label: 'Year',
                 name: 'year'
+            },
+            {
+                label: 'UNIMARC',
+                name: 'record',
+                width: 200
             }
         ],
 

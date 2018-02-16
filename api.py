@@ -40,19 +40,19 @@ def get_books_by_query_simple():
     return json.dumps(resp)
 
 
-@app.route('/books_complex', methods=['POST'])
-# @cross_origin(supports_credentials=True)
-def get_books_by_query_complex():
-    """
-    Metoda za slanje svih podataka za knjige
-    :return: 
-    """
-    resp = []
-    if request.method == "POST" and request.data is not None:
-        req_list = loads(request.data.decode('utf-8'))
-        print(request.data)
-        resp = filter_books(req_list, simple=False)
-    return json.dumps(resp)
+# @app.route('/books_complex', methods=['POST'])
+# # @cross_origin(supports_credentials=True)
+# def get_books_by_query_complex():
+#     """
+#     Metoda za slanje svih podataka za knjige
+#     :return:
+#     """
+#     resp = []
+#     if request.method == "POST" and request.data is not None:
+#         req_list = loads(request.data.decode('utf-8'))
+#         print(request.data)
+#         resp = filter_books(req_list, simple=False)
+#     return json.dumps(resp)
 
 
 def filter_books(req_list, simple=True):
@@ -88,9 +88,9 @@ def filter_books(req_list, simple=True):
         if and_dict:
             final_dict['$or'].append(dict(and_dict))
     pprint(dict(final_dict))
-    resp = books.find(final_dict)
-    if simple:  # ako je simple response vraca odgovarajuca polja
-        resp = prepare_response(resp)
+    resp = books.find(final_dict, {'_id': False})
+    # if simple:  # ako je simple response vraca odgovarajuca polja
+    resp = prepare_response(resp)
     return resp
 
 
@@ -149,15 +149,15 @@ def get_value_by_key_in_list(dict_list, key):
     return None
 
 
-def generate_simple_query_dict(field_list, value):
-    or_dict = {}
-    # final_dict = defaultdict(list)
-    for item in field_list:
-        or_dict[item] = {"$regex": u"" + value}
-        # final_dict['$or'].append(or_dict)
-        # or_dict = {}
-    print(or_dict)
-    return or_dict
+# def generate_simple_query_dict(field_list, value):
+#     or_dict = {}
+#     # final_dict = defaultdict(list)
+#     for item in field_list:
+#         or_dict[item] = {"$regex": u"" + value}
+#         # final_dict['$or'].append(or_dict)
+#         # or_dict = {}
+#     print(or_dict)
+#     return or_dict
 
 
 def generate_or_query_dict(field_list, value):
@@ -197,6 +197,7 @@ def prepare_dict(final_dict):
     :param final_dict: 
     :return: 
     """
+    print(final_dict)
     prepared_dict = {}
     try:
         title_author = final_dict.get('200').split(';')
@@ -227,6 +228,8 @@ def prepare_dict(final_dict):
     except:
         prepared_dict["place"] = ""
 
+    prepared_dict["record"] = stringify_dict(final_dict)
+
     return prepared_dict
 
 
@@ -252,25 +255,34 @@ def stringify_dict(resp_dict):
     """
     lst = []
     for k, v in resp_dict.items():
-        field = k + '  ' + v
+        field = str(k) + '  ' + str(recover_string(v))
         lst.append(field)
     return ' '.join(lst)
 
 
-def stringify_response(resp):
-    """
-    za complex response priprema stringova
-    :param resp: 
-    :return: 
-    """
-    lst = []
-    for r in resp:
-        lst.append(stringify_dict(r))
-    return lst
+def recover_string(raw_data):
+    lst = raw_data.split(';')
+    result = ""
+    for i, element in enumerate(lst):
+        result += str(chr(97 + i)) + element.strip() + " "
+    return result
+
+# def stringify_response(resp):
+#     """
+#     za complex response priprema stringova
+#     :param resp:
+#     :return:
+#     """
+#     lst = []
+#     for r in resp:
+#         record = {"record": stringify_dict(r)}
+#         lst.append(record)
+#     return lst
 
 
 
 
 if __name__ == '__main__':
-    # app.run(port=8080)
-    print(stringify_response([{"100": "lalalalal", "101": "jajajajaja", "150": "kirac"}, {"999": "sisa", "434": "aaa"}]))
+    app.run(port=8080)
+    # print(stringify_response([{"100": "lalalalal", "101": "jajajajaja", "150": "kirac"}, {"999": "sisa", "434": "aaa"}]))
+    # print(chr(65))
