@@ -24,7 +24,7 @@ def get_template():
 
 @app.route('/tags', methods=['GET'])
 def get_tags():
-    all_t = tags.find()
+    all_t = tags.find({}, {'_id': False})
     return dumps(all_t)
 
 
