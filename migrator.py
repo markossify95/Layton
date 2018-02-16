@@ -29,3 +29,10 @@ def insert_prefixes(prefixes):
         db.create_collection('prefixes')
 
     db.prefixes.insert(prefixes)
+
+
+def init_history():
+    client = MongoClient()
+    db = client['library']
+    if 'custom_auth' not in db.collection_names():
+        db.create_collection('custom_auth')

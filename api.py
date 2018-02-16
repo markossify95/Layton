@@ -80,11 +80,13 @@ def find_and_update(token, req_list):
 
 @app.route('/get_session_history', methods=['GET'])
 @cross_origin(supports_credentials=True)
-def get_session_history(token):
+def get_session_history():
+    token = request.headers.get('Authorization')
+    print(token)
     if not token:
         return False
 
-    token = db.custom_auth.find_one({'id': token})
+    token = db.custom_auth.find_one({'id': token}, {'_id': False})
     if token and token['expires'] > datetime.utcnow():
         return json.dumps({'searches': token['data']})
     return json.dumps({})
@@ -151,7 +153,7 @@ def get_prefixes():
     Metoda za slanje human readable prefiksa na frontend
     :return: 
     """
-    prefix_list = prefixes.find()
+    prefix_list = prefixes.find({}, {'_id': False})
     return dumps(prefix_list, ensure_ascii=False)  # , JSONOptions(json_mode=JSONMode.RELAXED)
 
 

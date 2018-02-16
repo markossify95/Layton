@@ -184,6 +184,30 @@ $(document).ready(function () {
 
     });
 
+    $("button[name='history']").click(function () {
+        $.ajax({
+            url: "http://127.0.0.1:5000/get_session_history",
+            dataType: 'json',
+            type: 'get',
+            headers: {
+                "Authorization": localStorage.getItem('token')
+            },
+            crossDomain: true,
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                resultObj = data;
+                if (resultObj['Authorized']) {
+                    alert("Session expired. Reloading...");
+                    location.reload().delay(2000);
+                } else {
+                    console.log(resultObj);
+                    alert(JSON.stringify(resultObj, null, 4));
+                }
+            }
+        });
+
+    });
+
 
 });
 

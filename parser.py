@@ -78,3 +78,4 @@ def parse_prefixes():
 # parse_tags()
 # parse_books()
 # parse_prefixes()
+# migrator.init_history()

@@ -1,3 +1,16 @@
 #tablediv {
     margin-top: 30px;
 }
+
+footer {
+ position:fixed;
+ bottom:0;
+ left:0;
+    width: auto;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open>.dropdown-toggle.btn-primary {
+    color: #fff;
+    background-color: #00b3db;
+    border-color: #285e8e; /*set the color you want here*/
+}
